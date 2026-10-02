@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Recipe Generator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="brand">🍳 <span>Spicewise</span> ✨</div>
+      <div class="auth-buttons" id="auth-buttons" style="position: absolute; top: 20px; right: 20px; display: flex; gap: 10px;">
+        <button onclick="window.location.href='http://localhost:5000/login'" style="padding: 8px 16px; background: rgba(255,255,255,0.2); border: 1px solid white; color: white; border-radius: 5px; cursor: pointer; font-size: 14px;">Sign In</button>
+        <button onclick="window.location.href='http://localhost:5000/signup'" style="padding: 8px 16px; background: white; border: none; color: #667eea; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: 600;">Sign Up</button>
+      </div>
+      <div class="user-info" id="user-info" style="position: absolute; top: 20px; right: 20px; display: none; align-items: center; gap: 15px;">
+        <span style="color: white; font-weight: 500;" id="user-name-display"></span>
+        <button onclick="showFavouritesPage()" style="padding: 8px 16px; background: rgba(255,255,255,0.2); border: 1px solid white; color: white; border-radius: 5px; cursor: pointer; font-size: 14px;">❤️ My Favourites</button>
+        <button onclick="logout()" style="padding: 8px 16px; background: rgba(255,255,255,0.2); border: 1px solid white; color: white; border-radius: 5px; cursor: pointer; font-size: 14px;">Logout</button>
+      </div>
+      <h2>AI-Powered Indian Recipe Recommender</h2>
+      <p>Discover authentic Indian recipes based on the ingredients you have at home.</p>
+    </div>
+  </header>
+
+  <section class="bg-section">
+  <div class="container">
+    <div class="search-card">
+      <div class="card-title">What ingredients do you have?</div>
+      <div class="input-area-relative" style="position:relative;">
+        <div class="input-row">
+          <input type="text" id="ingredients" placeholder="Enter an ingredient (e.g., tomato, rice, onion) or The recipe name" autocomplete="off">
+          <button id="voice-input-btn" type="button" class="mic-btn" title="Speak ingredients">🎙️</button>
+          <button id="add-ingredient">+ Add</button>
+        </div>
+        <div class="voice-status-wrapper">
+          <span id="voice-status" class="voice-status" style="display:none;">Listening…</span>
+        </div>
+        <ul id="suggestions-list" class="suggestions" style="display:none;"></ul>
+      </div>
+      <div id="chips" class="chips"></div>
+
+      <div class="filters">
+        
+
+        <div class="sub-container">
+          <div class="card-title">🌍 Cuisines</div>
+          <div class="dropdown" id="cuisine-dropdown">
+            <button class="dropdown-toggle" data-value="all">All Cuisines</button>
+            <div class="dropdown-menu">
+              <button data-value="all">All Cuisines</button>
+              <button data-value="maharashtrian">Maharashtrian</button>
+              <button data-value="punjabi">Punjabi</button>
+              <button data-value="italian">Italian</button>
+              <button data-value="chinese">Chinese</button>
+              <button data-value="south indian">South Indian</button>
+              <button data-value="bengali">Bengali</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="sub-container">
+          <div class="card-title">🍽️ Meal</div>
+          <div class="dropdown" id="meal-dropdown">
+            <button class="dropdown-toggle" data-value="">All Meal</button>
+            <div class="dropdown-menu">
+              <button data-value="">All Meal</button>
+              <button data-value="breakfast">Breakfast</button>
+              <button data-value="lunch">Lunch</button>
+              <button data-value="dinner">Dinner</button>
+              <button data-value="snack">Snack</button>
+              <button data-value="dessert">Dessert</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions actions-main">
+        <button id="find-recipes" onclick="generateRecipe()">🍽️ Find Recipes</button>
+        <span id="ing-count" class="muted"></span>
+      </div>
+    </div>
+
+    <div id="loader" class="loader" style="display:none;">
+      <div class="spinner"></div>
+      <div class="loader-text">Finding recipes...</div>
+    </div>
+    <div id="cards"></div>
+    <pre id="output" style="display:none;"></pre>
+  </div>
+  </section>
+
+  <!-- Favourites Section -->
+  <section class="bg-section" id="favourites-section" style="display: none;">
+    <div class="container">
+      <div style="text-align: center; margin-bottom: 30px;">
+        <h2 style="color: #333; margin-bottom: 10px;">❤️ My Favourite Recipes</h2>
+        <button onclick="showMainPage()" style="padding: 10px 20px; background: #667eea; border: none; color: white; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: 600;">← Back to Recipe Generator</button>
+      </div>
+      <div id="favourites-container"></div>
+    </div>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Information</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .info-section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .info-section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .info-item {
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .label {
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .value {
+            color: #333;
+            word-break: break-all;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-exists {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-not-exists {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        
+        .back-link:hover {
+            background: #5568d3;
+        }
+        
+        .table-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .table-list li {
+            padding: 5px 0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Database Information</h1>
+        
+        <div class="info-section">
+            <h2>Database Status</h2>
+            <div class="info-item">
+                <span class="label">Database Path:</span>
+                <span class="value" id="db-path">Loading...</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Database Exists:</span>
+                <span id="db-exists">Loading...</span>
+            </div>
+            <div class="info-item" id="db-size-item" style="display: none;">
+                <span class="label">Database Size:</span>
+                <span class="value" id="db-size">-</span>
+            </div>
+        </div>
+        
+        <div class="info-section" id="tables-section" style="display: none;">
+            <h2>Tables</h2>
+            <ul class="table-list" id="tables-list"></ul>
+        </div>
+        
+        <div class="info-section" id="stats-section" style="display: none;">
+            <h2>Statistics</h2>
+            <div class="info-item">
+                <span class="label">Total Users:</span>
+                <span class="value" id="user-count">0</span>
+            </div>
+            <div class="info-item">
+                <span class="label">User Preferences:</span>
+                <span class="value" id="pref-count">0</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Recipe History Records:</span>
+                <span class="value" id="history-count">0</span>
+            </div>
+        </div>
+        
+        <a href="/" class="back-link">← Back to Home</a>
+    </div>
+    
+    <script>
+        async function loadDbInfo() {
+            try {
+                const res = await fetch('/db-info');
+                const data = await res.json();
+                
+                document.getElementById('db-path').textContent = data.database_path;
+                
+                const existsBadge = data.database_exists 
+                    ? '<span class="status-badge status-exists">✓ EXISTS</span>'
+                    : '<span class="status-badge status-not-exists">✗ NOT FOUND</span>';
+                document.getElementById('db-exists').innerHTML = existsBadge;
+                
+                if (data.database_exists) {
+                    document.getElementById('db-size-item').style.display = 'flex';
+                    document.getElementById('db-size').textContent = `${data.database_size} bytes (${data.database_size_kb} KB)`;
+                    
+                    if (data.tables.length > 0) {
+                        document.getElementById('tables-section').style.display = 'block';
+                        const tablesList = document.getElementById('tables-list');
+                        data.tables.forEach(table => {
+                            const li = document.createElement('li');
+                            li.textContent = `• ${table}`;
+                            tablesList.appendChild(li);
+                        });
+                    }
+                    
+                    document.getElementById('stats-section').style.display = 'block';
+                    document.getElementById('user-count').textContent = data.user_count;
+                    document.getElementById('pref-count').textContent = data.preferences_count;
+                    document.getElementById('history-count').textContent = data.history_count;
+                }
+            } catch (err) {
+                console.error('Error loading DB info:', err);
+                document.getElementById('db-path').textContent = 'Error loading information';
+            }
+        }
+        
+        loadDbInfo();
+    </script>
+</body>
+</html>
